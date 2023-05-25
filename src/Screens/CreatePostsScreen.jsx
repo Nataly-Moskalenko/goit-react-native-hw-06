@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, Image, TextInput, TouchableOpacity } from 'react-native';
-import { ButtonPublishActive, ButtonPublishInactive, ButtonDeletePost } from '../Components/Button';
+import { ButtonPublishActive, ButtonPublishInactive, ButtonDeletePost } from '../components/Button';
 import { useNavigation } from '@react-navigation/native';
 import { LocationIcon } from '../../assets/SvgIcons';
 

@@ -9,7 +9,7 @@ import {
   Pressable,
   ImageBackground,
 } from 'react-native';
-import { ButtonSignup, ButtonMoveToLogin } from '../Components/Button';
+import { ButtonSignup, ButtonMoveToLogin } from '../components/Button';
 import { useTogglePasswordVisibility } from '../../hooks/useTogglePasswordVisibility';
 import imageBg from '../../assets/photo-bg.png';
 import { useNavigation } from '@react-navigation/native';
@@ -181,7 +181,7 @@ const styles = StyleSheet.create({
     lineHeight: 19,
     color: '#1B4371',
   },
-  wrapper: {
+  wrapper: {   
     marginTop: 16,
     flexDirection: 'row',
     justifyContent: 'center',
