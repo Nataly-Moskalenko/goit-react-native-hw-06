@@ -14,6 +14,10 @@ import { useTogglePasswordVisibility } from '../../hooks/useTogglePasswordVisibi
 import imageBg from '../../assets/photo-bg.png';
 import { useNavigation } from '@react-navigation/native';
 
+import { useDispatch, useSelector } from 'react-redux';
+import { loginDB, signInwithEmail } from '../firebase/operations';
+import { selectUser, selectAuth } from '../redux/selectors';
+
 export default function LoginScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -24,6 +28,29 @@ export default function LoginScreen() {
 
   const { passwordVisibility, visibility, handlePasswordVisibility } =
     useTogglePasswordVisibility();
+
+  const dispatch = useDispatch();
+  // const auth = useSelector(selectAuth);
+  // const user = useSelector(selectUser);
+  // console.log(auth);
+
+  const onLoginPress = () => {
+    try {
+      const user = dispatch(signInwithEmail({ email, password }));
+      console.log(user);
+      const uid = user.uid;
+      const data = {
+        id: uid,
+        email,
+        password,
+      };
+      navigation.navigate('HomeScreen');
+
+      console.log(data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -55,7 +82,7 @@ export default function LoginScreen() {
                 <Text style={styles.visibility}>{visibility}</Text>
               </Pressable>
             </View>
-            <ButtonLogin onPress={() => navigation.navigate('HomeScreen')} />
+            <ButtonLogin onPress={onLoginPress} />
             <View style={styles.wrapper}>
               <Text style={styles.text}>Do you have no account?</Text>
               <ButtonMoveToSignup onPress={() => navigation.navigate('RegistrationScreen')} />
@@ -171,7 +198,7 @@ const styles = StyleSheet.create({
     lineHeight: 19,
     color: '#1B4371',
   },
-  wrapper: {   
+  wrapper: {
     marginTop: 16,
     flexDirection: 'row',
     justifyContent: 'center',

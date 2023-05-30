@@ -2,12 +2,17 @@ import { StyleSheet, Text, View, Image, Pressable } from 'react-native';
 import { CommentWhiteIcon, LocationIcon } from '../../assets/SvgIcons';
 import { useNavigation } from '@react-navigation/native';
 
+// import { useSelector } from 'react-redux';
+// import { selectUser } from '../redux/selectors';
+
 export default function PostsScreen({ route }) {
   const navigation = useNavigation();
   const imageUri = route.params ? route.params.imageUri : null;
   const location = route.params ? route.params.location : null;
   const name = route.params ? route.params.name : null;
-  const locationName = route.params ? route.params.locationName : null;
+  const locationName = route.params ? route.params.locationName : null; 
+
+  // const user = useSelector(selectUser);  
 
   return (
     <View style={styles.container}>
@@ -20,7 +25,7 @@ export default function PostsScreen({ route }) {
       </View>
       {route.params && (
         <View style={styles.post}>
-          <Image source={{ uri: imageUri }} style={styles.postPhoto} />          
+          <Image source={{ uri: imageUri }} style={styles.postPhoto} />
           <Text style={styles.postName}>{name}</Text>
           <View style={styles.postWrapper}>
             <View style={styles.comment}>

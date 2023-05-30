@@ -13,6 +13,9 @@ import { ButtonSignup, ButtonMoveToLogin } from '../components/Button';
 import { useTogglePasswordVisibility } from '../../hooks/useTogglePasswordVisibility';
 import imageBg from '../../assets/photo-bg.png';
 import { useNavigation } from '@react-navigation/native';
+import { useDispatch, useSelector } from 'react-redux';
+import { registerDB, signUpWithEmail } from '../firebase/operations';
+import { selectUser, selectAuth } from '../redux/selectors';
 
 export default function RegistrationScreen() {
   const [login, setLogin] = useState('');
@@ -21,11 +24,42 @@ export default function RegistrationScreen() {
   const [loginFocus, setLoginFocus] = useState(false);
   const [emailFocus, setEmailFocus] = useState(false);
   const [passwordFocus, setPasswordFocus] = useState(false);
+  const [newUser, setNewUser] = useState(null);
 
   const { passwordVisibility, visibility, handlePasswordVisibility } =
     useTogglePasswordVisibility();
 
   const navigation = useNavigation();
+
+  const dispatch = useDispatch();
+  // const user = useSelector(selectUser);
+  const auth = useSelector(selectAuth);
+  console.log(auth);
+
+  const onSignupPress = () => {
+    try {
+      const registerUser = dispatch(signUpWithEmail({ email, password, login }));
+      setNewUser(registerUser);
+      // const uid = user.uid;
+      // const data = {
+      //   id: uid,
+      //   email,
+      //   password,
+      //   login,
+      // };
+      // setNewUser(data);
+      console.log(newUser);
+
+      navigation.navigate('HomeScreen');
+      // const auth = useSelector(selectAuth);
+      // console.log(auth);
+      // console.log(user);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  console.log(newUser);
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -65,7 +99,7 @@ export default function RegistrationScreen() {
                 <Text style={styles.visibility}>{visibility}</Text>
               </Pressable>
             </View>
-            <ButtonSignup onPress={() => navigation.navigate('HomeScreen')} />
+            <ButtonSignup onPress={onSignupPress} />
             <View style={styles.wrapper}>
               <Text style={styles.text}>Do you already have an account?</Text>
               <ButtonMoveToLogin onPress={() => navigation.navigate('LoginScreen')} />
@@ -181,7 +215,7 @@ const styles = StyleSheet.create({
     lineHeight: 19,
     color: '#1B4371',
   },
-  wrapper: {   
+  wrapper: {
     marginTop: 16,
     flexDirection: 'row',
     justifyContent: 'center',
