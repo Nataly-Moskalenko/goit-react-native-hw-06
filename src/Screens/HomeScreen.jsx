@@ -9,9 +9,13 @@ import { ButtonLogOut } from '../components/Button';
 import Icon from 'react-native-vector-icons/Feather';
 import Ionicon from 'react-native-vector-icons/Ionicons';
 
+import { logOut } from '../firebase/operations';
+import { useDispatch } from 'react-redux';
+
 export default function HomeScreen() {
   const Tabs = createBottomTabNavigator();
   const navigation = useNavigation();
+  const dispatch = useDispatch();
 
   return (
     <Tabs.Navigator initialRouteName="PostsScreen">
@@ -27,7 +31,12 @@ export default function HomeScreen() {
           //     justifyContent: 'center',
           // },
           headerRight: () => (
-            <ButtonLogOut onPress={() => navigation.navigate('LoginScreen')} />
+            <ButtonLogOut
+              onPress={() => {
+                dispatch(logOut);
+                navigation.navigate('LoginScreen');
+              }}
+            />
           ),
           headerRightContainerStyle: { paddingRight: 20 },
         }}
@@ -59,8 +68,8 @@ export default function HomeScreen() {
 
 // const styles = StyleSheet.create({
 //   out: { paddingRight: 20, color: '#212121', marginRight: 20 },
-  // container: {
-  //   flex: 1,
-  //   backgroundColor: '#fff',
-  // },
+// container: {
+//   flex: 1,
+//   backgroundColor: '#fff',
+// },
 // });

@@ -1,16 +1,12 @@
 import { AsyncStorage } from 'react-native';
 import { createSlice } from '@reduxjs/toolkit';
-import { signUpWithEmail, signInwithEmail, getUserId } from './operations';
-// import { registerDB, loginDB } from './operations';
-// const LOGGED_IN = 'auth/LOGGED_IN';
-// const LOGGED_OUT = 'auth/LOGGED_OUT';
+import { signUpWithEmail, signInwithEmail, signOut, getUserId } from './operations';
 
 const initialState = {
-  user: { email: null, password: null },
-  token: null,
-  // error: null,
-  userId: null,
-  isloggedIn: false,
+  // user: { email: null, password: null },
+  user: null,
+  // token: null,
+  error: null,
   status: 'idle',
 };
 
@@ -21,44 +17,56 @@ const authSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(signUpWithEmail.fulfilled, (state, action) => {
-        state.status = 'success';
         state.user = action.payload;
-        state.isloggedIn = true;
+        // state.token = action.payload.token;
+        state.error = null;
+        // state.status = 'isLoggedIn';
+        state.status = 'isRegistered';
       })
       .addCase(signUpWithEmail.pending, (state) => {
-        state.status = 'loading';
+        state.status = 'pending';
       })
       .addCase(signUpWithEmail.rejected, (state) => {
         state.status = 'error';
+        state.error = action.payload;
       })
       .addCase(signInwithEmail.fulfilled, (state, action) => {
-        state.status = 'success';
-        state.isloggedIn = true;
         state.user = action.payload;
+        // state.token = action.payload.token;
+        state.error = null;
+        state.status = 'isLoggedIn';
       })
       .addCase(signInwithEmail.rejected, (state) => {
         state.status = 'error';
+        state.error = action.payload;
       })
       .addCase(signInwithEmail.pending, (state) => {
-        state.status = 'loading';
+        state.status = 'pending';
       })
-      .addCase(getUserId.fulfilled, (state, action) => {
-        state.userId = action.payload;
-        if (action.payload) {
-          state.isloggedIn = true;
-        }
+      .addCase(signOut.fulfilled, (state) => {
+        // state.user = null;
+        state.user = { email: null, password: null };
+        // state.token = null;
+        state.error = null;
+        state.status = 'idle';
+      })
+      .addCase(signOut.rejected, (state) => {
+        state.status = 'error';
+        state.error = action.payload;
+      })
+      .addCase(signOut.pending, (state) => {
+        state.status = 'pending';
+        // })
+        // .addCase(getUserId.fulfilled, (state, action) => {
+        //   state.userId = action.payload;
+        //   if (action.payload) {
+        //     state.status = 'isLoggedIn';
+        //   }
       });
   },
 });
 
 export const authReducer = authSlice.reducer;
-
-// const initialState = {
-//   isLoggedIn: false,
-//   user: { email: null, password: null },
-//   token: null,
-//   error: null,
-// };
 
 // export const authReducer = (state = initialState, action) => {
 //   switch (action.type) {
@@ -80,33 +88,3 @@ export const authReducer = authSlice.reducer;
 //       return state;
 //   }
 // };
-
-// export const login = createAsyncThunk(
-//   'login',
-//   ({email, password}) => firebase.auth().signInWithEmailAndPassword(email, password)
-// );
-
-// const authSlice = createSlice({
-//   name: "authSlice",
-//   initialState: {
-//     isLoggingIn: false,
-//     isLoggingOut: false,
-//     isVerifying: false,
-//     loginError: false,
-//     logoutError: false,
-//     isAuthenticated: false,
-//     user: {},
-//   },
-//   reducers: {
-//     /* any other state updates here */
-//   },
-//   extraReducers: (builder) => {
-//     builder.addCase(login.pending, (state, action) => {
-//       // mark something as loading here
-//     }
-
-//     builder.addCase(login.fulfilled, (state, action) => {
-//       // mark request as complete and save results
-//     }
-//   }
-// });

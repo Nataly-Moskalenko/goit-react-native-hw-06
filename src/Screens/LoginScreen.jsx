@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   StyleSheet,
   Text,
@@ -15,8 +15,8 @@ import imageBg from '../../assets/photo-bg.png';
 import { useNavigation } from '@react-navigation/native';
 
 import { useDispatch, useSelector } from 'react-redux';
-import { loginDB, signInwithEmail } from '../firebase/operations';
-import { selectUser, selectAuth } from '../redux/selectors';
+import { signInwithEmail } from '../firebase/operations';
+import { selectUser, selectStatus } from '../redux/selectors';
 
 export default function LoginScreen() {
   const [email, setEmail] = useState('');
@@ -30,27 +30,29 @@ export default function LoginScreen() {
     useTogglePasswordVisibility();
 
   const dispatch = useDispatch();
-  // const auth = useSelector(selectAuth);
-  // const user = useSelector(selectUser);
-  // console.log(auth);
+  const status = useSelector(selectStatus);
+  const user = useSelector(selectUser);
 
   const onLoginPress = () => {
+    if (email === '' || password === '') {
+      return;
+    }
     try {
-      const user = dispatch(signInwithEmail({ email, password }));
-      console.log(user);
-      const uid = user.uid;
-      const data = {
-        id: uid,
-        email,
-        password,
-      };
-      navigation.navigate('HomeScreen');
-
-      console.log(data);
+      dispatch(signInwithEmail({ email, password }));
     } catch (error) {
       console.log(error);
     }
   };
+
+  useEffect(() => {
+    if (status === 'isLoggedIn') {
+      navigation.navigate('HomeScreen');
+    }
+  }, [status]);
+
+  useEffect(() => {
+    console.log(user);
+  }, [user]);
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>

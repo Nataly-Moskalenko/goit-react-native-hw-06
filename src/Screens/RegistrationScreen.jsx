@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   StyleSheet,
   Text,
@@ -14,8 +14,8 @@ import { useTogglePasswordVisibility } from '../../hooks/useTogglePasswordVisibi
 import imageBg from '../../assets/photo-bg.png';
 import { useNavigation } from '@react-navigation/native';
 import { useDispatch, useSelector } from 'react-redux';
-import { registerDB, signUpWithEmail } from '../firebase/operations';
-import { selectUser, selectAuth } from '../redux/selectors';
+import { signUpWithEmail } from '../firebase/operations';
+import { selectUser, selectStatus } from '../redux/selectors';
 
 export default function RegistrationScreen() {
   const [login, setLogin] = useState('');
@@ -23,8 +23,7 @@ export default function RegistrationScreen() {
   const [password, setPassword] = useState('');
   const [loginFocus, setLoginFocus] = useState(false);
   const [emailFocus, setEmailFocus] = useState(false);
-  const [passwordFocus, setPasswordFocus] = useState(false);
-  const [newUser, setNewUser] = useState(null);
+  const [passwordFocus, setPasswordFocus] = useState(false); 
 
   const { passwordVisibility, visibility, handlePasswordVisibility } =
     useTogglePasswordVisibility();
@@ -32,34 +31,26 @@ export default function RegistrationScreen() {
   const navigation = useNavigation();
 
   const dispatch = useDispatch();
-  // const user = useSelector(selectUser);
-  const auth = useSelector(selectAuth);
-  console.log(auth);
+  const status = useSelector(selectStatus);
+  // const user = useSelector(selectUser);  
+  // console.log(user);
 
   const onSignupPress = () => {
+    if (email === '' || login === '' || password === '') {
+      return;
+    }
     try {
-      const registerUser = dispatch(signUpWithEmail({ email, password, login }));
-      setNewUser(registerUser);
-      // const uid = user.uid;
-      // const data = {
-      //   id: uid,
-      //   email,
-      //   password,
-      //   login,
-      // };
-      // setNewUser(data);
-      console.log(newUser);
-
-      navigation.navigate('HomeScreen');
-      // const auth = useSelector(selectAuth);
-      // console.log(auth);
-      // console.log(user);
+      dispatch(signUpWithEmail({ email, password, login }));
     } catch (error) {
       console.log(error);
     }
   };
 
-  console.log(newUser);
+  useEffect(() => {
+    if (status === 'isRegistred') {
+      navigation.navigate('HomeScreen');
+    }
+  }, [status]);
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
