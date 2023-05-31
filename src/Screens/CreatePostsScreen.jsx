@@ -9,6 +9,9 @@ import * as MediaLibrary from 'expo-media-library';
 // import { getLocales } from 'expo-localization';
 import * as Location from 'expo-location';
 
+import { useDispatch } from 'react-redux';
+import { writeDataToFirestore } from '../firebase/operations';
+
 export default function CreatePostsScreen() {
   const [name, setName] = useState('');
   const [locationName, setLocationName] = useState('');
@@ -18,6 +21,8 @@ export default function CreatePostsScreen() {
   const [imageUri, setImageUri] = useState(null);
   const [type, setType] = useState(Camera.Constants.Type.back);
   const [location, setLocation] = useState(null);
+
+  const dispatch = useDispatch();
 
   useEffect(() => {
     (async () => {
@@ -107,12 +112,13 @@ export default function CreatePostsScreen() {
       {imageUri && (
         <ButtonPublishActive
           onPress={() => {
+            // dispatch(writeDataToFirestore({ imageUri, location, imageName: name, locationName }));
+            navigation.navigate('PostsScreen', { imageUri, location, name, locationName });
             setImageUri(null);
             setName('');
             setLocationName('');
             // console.log(getLocales()[0].regionCode);
             console.log(location);
-            navigation.navigate('PostsScreen', { imageUri, location, name, locationName });
           }}
         />
       )}

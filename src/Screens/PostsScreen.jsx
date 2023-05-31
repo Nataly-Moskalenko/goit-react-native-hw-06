@@ -5,24 +5,26 @@ import { useNavigation } from '@react-navigation/native';
 import { useSelector } from 'react-redux';
 // import { useEffect } from 'react';
 
-import { selectUser } from '../redux/selectors';
+import { selectUser, selectPosts } from '../redux/selectors';
 
 export default function PostsScreen({ route }) {
   const navigation = useNavigation();
   const imageUri = route.params ? route.params.imageUri : null;
   const location = route.params ? route.params.location : null;
   const name = route.params ? route.params.name : null;
-  const locationName = route.params ? route.params.locationName : null; 
-  
+  const locationName = route.params ? route.params.locationName : null;
+
   const user = useSelector(selectUser);
+  // const posts = useSelector(selectPosts);
+  // console.log(posts[0]);
 
   return (
     <View style={styles.container}>
       <View style={styles.user}>
         <Image style={styles.userPhoto} />
         <View style={styles.userDescription}>
-          <Text style={styles.userName}>{user.displayName}</Text>
-          <Text style={styles.userEmail}>{user.email}</Text>
+          {/* {user && <Text style={styles.userName}>{user.displayName}</Text>} */}
+          {user && <Text style={styles.userEmail}>{user.email}</Text>}
         </View>
       </View>
       {route.params && (
@@ -46,6 +48,25 @@ export default function PostsScreen({ route }) {
           </View>
         </View>
       )}
+      {/* <View style={styles.post}>
+          <Image source={{ uri: imageUri }} style={styles.postPhoto} />
+          <Text style={styles.postName}>{name}</Text>
+          <View style={styles.postWrapper}>
+            <View style={styles.comment}>
+              <Pressable onPress={() => navigation.navigate('CommentsScreen')}>
+                <View>{CommentWhiteIcon}</View>
+              </Pressable>
+              <Text>Comment</Text>
+            </View>
+
+            <View style={styles.location}>
+              <Pressable onPress={() => navigation.navigate('MapScreen', { location })}>
+                <View>{LocationIcon}</View>
+              </Pressable>
+              <Text>{locationName}</Text>
+            </View>
+          </View>
+        </View> */}
     </View>
   );
 }

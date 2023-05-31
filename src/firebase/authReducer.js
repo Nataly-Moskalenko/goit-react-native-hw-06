@@ -1,6 +1,6 @@
 import { AsyncStorage } from 'react-native';
 import { createSlice } from '@reduxjs/toolkit';
-import { signUpWithEmail, signInwithEmail, signOut, getUserId } from './operations';
+import { signUpWithEmail, signInwithEmail, logOut, getUserId } from './operations';
 
 const initialState = {
   // user: { email: null, password: null },
@@ -13,7 +13,7 @@ const initialState = {
 const authSlice = createSlice({
   name: 'auth',
   initialState,
-  reducers: {},
+  // reducers: {},
   extraReducers: (builder) => {
     builder
       .addCase(signUpWithEmail.fulfilled, (state, action) => {
@@ -43,18 +43,18 @@ const authSlice = createSlice({
       .addCase(signInwithEmail.pending, (state) => {
         state.status = 'pending';
       })
-      .addCase(signOut.fulfilled, (state) => {
+      .addCase(logOut.fulfilled, (state) => {
         // state.user = null;
         state.user = { email: null, password: null };
         // state.token = null;
         state.error = null;
         state.status = 'idle';
       })
-      .addCase(signOut.rejected, (state) => {
+      .addCase(logOut.rejected, (state) => {
         state.status = 'error';
         state.error = action.payload;
       })
-      .addCase(signOut.pending, (state) => {
+      .addCase(logOut.pending, (state) => {
         state.status = 'pending';
         // })
         // .addCase(getUserId.fulfilled, (state, action) => {
