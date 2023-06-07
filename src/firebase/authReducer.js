@@ -1,13 +1,24 @@
-import { AsyncStorage } from 'react-native';
 import { createSlice } from '@reduxjs/toolkit';
 import { signUpWithEmail, signInwithEmail, logOut, getUserId } from './operations';
 
 const initialState = {
-  // user: { email: null, password: null },
+  // user: { email: null, password: null, id: null, login: null, },
   user: null,
+  // userId: null,
   // token: null,
   error: null,
   status: 'idle',
+  // id: null,
+  // login: null,
+  // email: null,
+  // avatar: null,
+  // stateChange: false,
+  // email: '',
+  // password: '',
+  // error: '',
+  // loading: false,
+  // isLoggedIn: false,
+  // hasCheckedAuthState: false
 };
 
 const authSlice = createSlice({
@@ -17,11 +28,17 @@ const authSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(signUpWithEmail.fulfilled, (state, action) => {
-        state.user = action.payload;
+        // state.email = action.payload.email;
+        // state.password = action.payload.password;
+        // state.login = action.payload.login;
+        // state.id = action.payload.id;
         // state.token = action.payload.token;
+        state.user = action.payload;
         state.error = null;
-        // state.status = 'isLoggedIn';
-        state.status = 'isRegistered';
+        state.status = 'isRegistred';
+
+        // AsyncStorage.multiSet([['user', JSON.stringify(user)]]);
+        // state.status = 'isRegistered';
       })
       .addCase(signUpWithEmail.pending, (state) => {
         state.status = 'pending';
@@ -33,6 +50,10 @@ const authSlice = createSlice({
       .addCase(signInwithEmail.fulfilled, (state, action) => {
         state.user = action.payload;
         // state.token = action.payload.token;
+        // state.email = action.payload.email;
+        // state.password = action.payload.password;
+        // state.login = action.payload.login;
+        // state.id = action.payload.id;
         state.error = null;
         state.status = 'isLoggedIn';
       })
@@ -44,11 +65,17 @@ const authSlice = createSlice({
         state.status = 'pending';
       })
       .addCase(logOut.fulfilled, (state) => {
-        // state.user = null;
-        state.user = { email: null, password: null };
+        state.user = null;
+        // state.user = { email: null, password: null };
         // state.token = null;
+        // state.email = null;
+        // state.password = null;
+        // state.login = null;
+        // state.id = null;
         state.error = null;
-        state.status = 'idle';
+        state.status = 'logOuted';
+
+        // AsyncStorage.multiRemove(['user']);
       })
       .addCase(logOut.rejected, (state) => {
         state.status = 'error';

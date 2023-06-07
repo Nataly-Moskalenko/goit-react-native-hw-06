@@ -23,7 +23,7 @@ export default function RegistrationScreen() {
   const [password, setPassword] = useState('');
   const [loginFocus, setLoginFocus] = useState(false);
   const [emailFocus, setEmailFocus] = useState(false);
-  const [passwordFocus, setPasswordFocus] = useState(false); 
+  const [passwordFocus, setPasswordFocus] = useState(false);
 
   const { passwordVisibility, visibility, handlePasswordVisibility } =
     useTogglePasswordVisibility();
@@ -32,8 +32,8 @@ export default function RegistrationScreen() {
 
   const dispatch = useDispatch();
   const status = useSelector(selectStatus);
-  // const user = useSelector(selectUser);  
-  // console.log(user);
+  const user = useSelector(selectUser);
+  console.log(user);
 
   const onSignupPress = () => {
     if (email === '' || login === '' || password === '') {

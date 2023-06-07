@@ -2,9 +2,9 @@ import { createSlice } from '@reduxjs/toolkit';
 import { writeDataToFirestore, getDataFromFirestore, updateDataInFirestore } from './operations';
 
 const initialState = {
-  items: [],
+  error: null,
   status: 'idle',
-  error: null,  
+  items: [],
 };
 
 const postsSlice = createSlice({
@@ -14,7 +14,8 @@ const postsSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(writeDataToFirestore.fulfilled, (state, action) => {
-        state.items = [action.payload, ...state.items];        
+        state.items = [action.payload, ...state.items];
+        // state.items = action.payload;
         state.error = null;
         state.status = 'addedPost';
       })
@@ -38,7 +39,8 @@ const postsSlice = createSlice({
         state.status = 'pending';
       })
       .addCase(updateDataInFirestore.fulfilled, (state) => {
-        state.items = action.payload;
+        // state.items = action.payload;
+        state.items = [action.payload, ...state.items];
         state.error = null;
         state.status = 'updated';
       })

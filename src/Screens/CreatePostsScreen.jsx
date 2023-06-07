@@ -9,8 +9,14 @@ import * as MediaLibrary from 'expo-media-library';
 // import { getLocales } from 'expo-localization';
 import * as Location from 'expo-location';
 
-import { useDispatch } from 'react-redux';
-import { writeDataToFirestore } from '../firebase/operations';
+import { useDispatch, useSelector } from 'react-redux';
+import { selectUser } from '../redux/selectors';
+import {
+  writeDataToFirestore,
+  getDataFromFirestore,
+  updateDataInFirestore,
+  getUserId,
+} from '../firebase/operations';
 
 export default function CreatePostsScreen() {
   const [name, setName] = useState('');
@@ -23,6 +29,7 @@ export default function CreatePostsScreen() {
   const [location, setLocation] = useState(null);
 
   const dispatch = useDispatch();
+  const user = useSelector(selectUser);
 
   useEffect(() => {
     (async () => {
@@ -112,7 +119,29 @@ export default function CreatePostsScreen() {
       {imageUri && (
         <ButtonPublishActive
           onPress={() => {
-            // dispatch(writeDataToFirestore({ imageUri, location, imageName: name, locationName }));
+            console.log(user.uid);
+            // uid = user.uid;
+            // const uid = dispatch(getUserId);
+            // const data = dispatch(
+            //   updateDataInFirestore(user.uid, {
+            //     // imageUri: imageUri,
+            //     // location: location,
+            //     // imageName: name,
+            //     // locationName: locationName,
+            //     // imageName: 'Home',
+            //     post: '12345',
+            //   })
+            // );
+            // const data = dispatch(getDataFromFirestore());
+            const data = dispatch(
+              writeDataToFirestore({
+                imageUri: imageUri,
+                location: location,
+                imageName: name,
+                locationName: locationName,
+              })
+            );
+            console.log(data);
             navigation.navigate('PostsScreen', { imageUri, location, name, locationName });
             setImageUri(null);
             setName('');
