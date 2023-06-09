@@ -15,8 +15,11 @@ import imageBg from '../../assets/photo-bg.png';
 import { useNavigation } from '@react-navigation/native';
 
 import { useDispatch, useSelector } from 'react-redux';
-import { signInwithEmail } from '../firebase/operations';
+import { signInwithEmail } from '../redux/operations';
 import { selectUser, selectStatus } from '../redux/selectors';
+
+import { auth } from '../firebase/config';
+import { onAuthStateChanged } from 'firebase/auth';
 
 export default function LoginScreen() {
   const [email, setEmail] = useState('');
@@ -31,7 +34,7 @@ export default function LoginScreen() {
 
   const dispatch = useDispatch();
   const status = useSelector(selectStatus);
-  const user = useSelector(selectUser);
+  // const user = useSelector(selectUser);
 
   const onLoginPress = () => {
     if (email === '' || password === '') {
@@ -51,8 +54,16 @@ export default function LoginScreen() {
   }, [status]);
 
   useEffect(() => {
-    console.log(user);
-  }, [user]);
+    auth.onAuthStateChanged((user) => {
+      if (user) {
+        navigation.navigate('HomeScreen');
+      }
+    });
+  });
+
+  // useEffect(() => {
+  //   console.log(user);
+  // }, [user]);
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>

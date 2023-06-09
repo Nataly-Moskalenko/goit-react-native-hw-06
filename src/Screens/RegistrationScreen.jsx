@@ -13,9 +13,12 @@ import { ButtonSignup, ButtonMoveToLogin } from '../components/Button';
 import { useTogglePasswordVisibility } from '../../hooks/useTogglePasswordVisibility';
 import imageBg from '../../assets/photo-bg.png';
 import { useNavigation } from '@react-navigation/native';
-import { useDispatch, useSelector } from 'react-redux';
-import { signUpWithEmail } from '../firebase/operations';
-import { selectUser, selectStatus } from '../redux/selectors';
+import { useDispatch } from 'react-redux';
+import { signUpWithEmail } from '../redux/operations';
+// import { selectUser, selectStatus } from '../redux/selectors';
+
+// import { collection, addDoc } from 'firebase/firestore';
+// import { storage, db } from '../firebase/config';
 
 export default function RegistrationScreen() {
   const [login, setLogin] = useState('');
@@ -24,33 +27,32 @@ export default function RegistrationScreen() {
   const [loginFocus, setLoginFocus] = useState(false);
   const [emailFocus, setEmailFocus] = useState(false);
   const [passwordFocus, setPasswordFocus] = useState(false);
+  const [newUser, setNewUser] = useState(null);
 
   const { passwordVisibility, visibility, handlePasswordVisibility } =
     useTogglePasswordVisibility();
 
   const navigation = useNavigation();
 
-  const dispatch = useDispatch();
-  const status = useSelector(selectStatus);
-  const user = useSelector(selectUser);
-  console.log(user);
+  const dispatch = useDispatch();  
 
-  const onSignupPress = () => {
+  const onSignupPress = async () => {
     if (email === '' || login === '' || password === '') {
       return;
     }
     try {
       dispatch(signUpWithEmail({ email, password, login }));
+      setNewUser({ email, login });
     } catch (error) {
       console.log(error);
     }
   };
 
   useEffect(() => {
-    if (status === 'isRegistred') {
-      navigation.navigate('HomeScreen');
+    if (newUser) {      
+      navigation.navigate('HomeScreen');     
     }
-  }, [status]);
+  }, [newUser]);
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -90,7 +92,7 @@ export default function RegistrationScreen() {
                 <Text style={styles.visibility}>{visibility}</Text>
               </Pressable>
             </View>
-            <ButtonSignup onPress={onSignupPress} />
+            <ButtonSignup onPress={() => onSignupPress()} />
             <View style={styles.wrapper}>
               <Text style={styles.text}>Do you already have an account?</Text>
               <ButtonMoveToLogin onPress={() => navigation.navigate('LoginScreen')} />

@@ -1,6 +1,6 @@
-import { auth, db } from './config';
-import { collection, addDoc, getDocs, updateDoc } from 'firebase/firestore';
-
+import { auth, db } from '../firebase/config';
+// import { collection, addDoc, getDocs, updateDoc } from 'firebase/firestore';
+import { setDoc, doc, serverTimestamp } from 'firebase/firestore';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import {
   createUserWithEmailAndPassword,
@@ -9,19 +9,18 @@ import {
   onAuthStateChanged,
   signOut,
 } from 'firebase/auth';
-import { setDoc, doc, serverTimestamp } from 'firebase/firestore';
 
 export const signUpWithEmail = createAsyncThunk(
   'auth/signUpWithEmail',
-  async (email, password, login) => {
+  async ({ email, password, login }) => {
     const { user } = await createUserWithEmailAndPassword(auth, email, password);
     console.log(`User ${user.uid} created`);
-    await updateProfile(user, {
-      displayName: login,
-      // userId: user.uid,
-    });
-    console.log('User profile updated');    
-    return user;
+    const currentUser = auth.currentUser;
+    await updateProfile(currentUser, { displayName: login });
+    const formData = { login, email };
+    formData.timestamp = serverTimestamp();
+    await setDoc(doc(db, 'users', user.uid), formData);    
+    return formData;
   }
 );
 
@@ -33,22 +32,15 @@ export const signInwithEmail = createAsyncThunk(
   }
 );
 
-export const getUserId = createAsyncThunk('auth/getId', async () => {
-  onAuthStateChanged(auth, (user) => {
-    if (user) {
-      const uid = user.uid;
-      console.log(uid);
-      return uid;
-    }
-  });
-});
-
 export const logOut = createAsyncThunk('auth/logOut', async () => {
   await signOut(auth);
 });
 
-export const authStateChanged = async (onChange = () => {}) => {
-  onAuthStateChanged((user) => {
-    onChange(user);
-  });
-};
+export const authStateChanged = createAsyncThunk(
+  'auth/authStateChanged',
+  async (onChange = () => {}) => {
+    onAuthStateChanged((user) => {
+      onChange(user);
+    });
+  }
+);

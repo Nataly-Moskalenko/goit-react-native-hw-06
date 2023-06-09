@@ -5,10 +5,10 @@ import { useNavigation } from '@react-navigation/native';
 import { useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
 
-import { selectUser } from '../redux/selectors';
+import { selectUser, selectStatus } from '../redux/selectors';
 
-import { auth, db } from '../firebase/config';
-import { collection, addDoc, getDocs, updateDoc, doc } from 'firebase/firestore';
+import { db } from '../firebase/config';
+import { collection, getDocs } from 'firebase/firestore';
 
 export default function PostsScreen({ route }) {
   const navigation = useNavigation();
@@ -17,36 +17,38 @@ export default function PostsScreen({ route }) {
   const name = route.params ? route.params.name : null;
   const locationName = route.params ? route.params.locationName : null;
 
-  const [posts, setPosts] = useState([]);
-
+  // const [posts, setPosts] = useState([]);
+  const status = useSelector(selectStatus);
   const user = useSelector(selectUser);
-  console.log(user.uid);
+  // console.log(user.uid);
 
-  const getDataFromFirestore = async () => {
-    try {
-      const snapshot = await getDocs(collection(db, 'users', user.uid, 'posts'));
+  // const getDataFromFirestore = async () => {
+  //   try {
+  //     const snapshot = await getDocs(collection(db, 'users', user.uid, 'posts'));
+  //     snapshot.forEach((doc) => console.log(doc.data()));
+  //     snapshot.forEach((doc) => setPosts(posts.push(doc.data())));
+  //     console.log(snapshot.map((doc) => doc.data()));
+  //     return snapshot.map((doc) => doc.data());
+  //   } catch (error) {
+  //     console.log(error);
+  //     throw error;
+  //   } finally {
+  //     console.log(posts);
+  //   }
+  // };
 
-      // Перевіряємо у консолі отримані дані
-      snapshot.forEach((doc) => console.log(`${doc.id} =>`, doc.data()));
-      // Повертаємо масив обʼєктів у довільній формі
-      return snapshot.map((doc) => ({ id: doc.id, data: doc.data() }));
-    } catch (error) {
-      console.log(error);
-      throw error;
-    }
-  };
-
-  // getDataFromFirestore();
   useEffect(() => {
-    setPosts(getDataFromFirestore());
-  }, []);
+    if (status === 'logOuted') {
+      navigation.navigate('LoginScreen');
+    }
+  }, [status]);
 
   return (
     <View style={styles.container}>
       <View style={styles.user}>
         <Image style={styles.userPhoto} />
         <View style={styles.userDescription}>
-          {/* {user && <Text style={styles.userName}>{user.displayName}</Text>} */}
+          {user && <Text style={styles.userName}>{user.displayName}</Text>}
           {user && <Text style={styles.userEmail}>{user.email}</Text>}
         </View>
       </View>
@@ -71,29 +73,6 @@ export default function PostsScreen({ route }) {
           </View>
         </View>
       )}
-      {/* {posts.map((post) => ( */}
-      {/* <View style={styles.post}>
-        <Image source={{ uri: post.imageUri }} style={styles.postPhoto} />
-        <Text style={styles.postName}>{post.imageName}</Text>
-        <View style={styles.postWrapper}>
-          <View style={styles.comment}>
-            <Pressable onPress={() => navigation.navigate('CommentsScreen')}>
-              <View>{CommentWhiteIcon}</View>
-            </Pressable>
-            <Text>Comment</Text>
-          </View>
-
-          <View style={styles.location}>
-            <Pressable
-              onPress={() => navigation.navigate('MapScreen', { location: post.location })}
-            >
-              <View>{LocationIcon}</View>
-            </Pressable>
-            <Text>{post.locationName}</Text>
-          </View>
-        </View>
-      </View> */}
-      {/* ))} */}
     </View>
   );
 }

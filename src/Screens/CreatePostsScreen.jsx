@@ -25,7 +25,7 @@ export default function CreatePostsScreen() {
   const [type, setType] = useState(Camera.Constants.Type.back);
   const [location, setLocation] = useState(null);
 
-   const user = useSelector(selectUser);
+  const user = useSelector(selectUser);
 
   useEffect(() => {
     (async () => {
@@ -77,26 +77,22 @@ export default function CreatePostsScreen() {
       return asset;
     }
   };
-  
+
   const createPost = async () => {
-    try {      
+    try {
       const post = {
         imageUri,
         location,
         imageName: name,
         locationName,
-        userId: user.uid,
-      };      
-      const docRef = await addDoc(
-        collection(db, 'users', user.uid, 'posts'),
-        post        
-      );
+      };     
+      const docRef = await addDoc(collection(db, 'users', user.uid, 'posts'), post);
       console.log('Document written with ID: ', docRef.id);
     } catch (e) {
       console.error('Error adding document: ', e);
       throw e;
     }
-  };
+  };  
 
   return (
     <View style={styles.container}>
@@ -135,12 +131,12 @@ export default function CreatePostsScreen() {
       {imageUri && (
         <ButtonPublishActive
           onPress={() => {
-            console.log(user.uid);            
+            console.log(user.uid);
             createPost();
             navigation.navigate('PostsScreen', { imageUri, location, name, locationName });
             setImageUri(null);
             setName('');
-            setLocationName('');            
+            setLocationName('');
             console.log(location);
           }}
         />

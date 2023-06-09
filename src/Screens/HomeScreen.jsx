@@ -9,7 +9,7 @@ import { ButtonLogOut } from '../components/Button';
 import Icon from 'react-native-vector-icons/Feather';
 import Ionicon from 'react-native-vector-icons/Ionicons';
 
-import { logOut } from '../firebase/operations';
+import { logOut } from '../redux/operations';
 import { useDispatch } from 'react-redux';
 
 export default function HomeScreen() {
@@ -33,7 +33,7 @@ export default function HomeScreen() {
           headerRight: () => (
             <ButtonLogOut
               onPress={() => {
-                dispatch(logOut);
+                dispatch(logOut());
                 navigation.navigate('LoginScreen');
               }}
             />

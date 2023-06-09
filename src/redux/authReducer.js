@@ -1,20 +1,20 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { signUpWithEmail, signInwithEmail, logOut, getUserId } from './operations';
+import { signUpWithEmail, signInwithEmail, logOut, authStateChanged } from './operations';
 
 const initialState = {
-  // user: { email: null, id: null, login: null, uid: null},
-  user: null,  
+  user: { email: null, login: null, uid: null },
+  // user: null,
   error: null,
-  status: 'idle',  
-  stateChange: false,  
+  status: 'idle',
+  stateChange: false,
 };
 
 const authSlice = createSlice({
   name: 'auth',
-  initialState, 
+  initialState,
   extraReducers: (builder) => {
     builder
-      .addCase(signUpWithEmail.fulfilled, (state, action) => {        
+      .addCase(signUpWithEmail.fulfilled, (state, action) => {
         state.user = action.payload;
         state.error = null;
         state.status = 'isRegistred';       
@@ -22,16 +22,16 @@ const authSlice = createSlice({
       .addCase(signUpWithEmail.pending, (state) => {
         state.status = 'pending';
       })
-      .addCase(signUpWithEmail.rejected, (state) => {
+      .addCase(signUpWithEmail.rejected, (state, action) => {
         state.status = 'error';
         state.error = action.payload;
       })
       .addCase(signInwithEmail.fulfilled, (state, action) => {
-        state.user = action.payload;        
+        state.user = action.payload;
         state.error = null;
         state.status = 'isLoggedIn';
       })
-      .addCase(signInwithEmail.rejected, (state) => {
+      .addCase(signInwithEmail.rejected, (state, action) => {
         state.status = 'error';
         state.error = action.payload;
       })
@@ -39,18 +39,33 @@ const authSlice = createSlice({
         state.status = 'pending';
       })
       .addCase(logOut.fulfilled, (state) => {
-        state.user = null;        
+        state.user = null;
         state.error = null;
-        state.status = 'logOuted';       
+        state.status = 'logOuted';
       })
-      .addCase(logOut.rejected, (state) => {
+      .addCase(logOut.rejected, (state, action) => {
         state.status = 'error';
         state.error = action.payload;
       })
       .addCase(logOut.pending, (state) => {
-        state.status = 'pending';        
+        state.status = 'pending';
+      })
+      .addCase(authStateChanged.fulfilled, (state, action) => {
+        state.stateChange = action.payload;
+      })
+      .addCase(authStateChanged.rejected, (state, action) => {
+        state.status = 'error';
+        state.error = action.payload;
+      })
+      .addCase(authStateChanged.pending, (state) => {
+        state.status = 'pending';
       });
   },
 });
+
+// authStateChange: (state, { payload }) => ({
+//   ...state,
+//   stateChange: payload.stateChange,
+// }),
 
 export const authReducer = authSlice.reducer;
