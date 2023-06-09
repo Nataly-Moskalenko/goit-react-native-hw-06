@@ -6,17 +6,14 @@ import { LocationIcon } from '../../assets/SvgIcons';
 
 import { Camera } from 'expo-camera';
 import * as MediaLibrary from 'expo-media-library';
-// import { getLocales } from 'expo-localization';
 import * as Location from 'expo-location';
 
 import { useDispatch, useSelector } from 'react-redux';
 import { selectUser } from '../redux/selectors';
-import {
-  writeDataToFirestore,
-  getDataFromFirestore,
-  updateDataInFirestore,
-  getUserId,
-} from '../firebase/operations';
+
+import { collection, addDoc } from 'firebase/firestore';
+
+import { storage, db } from '../firebase/config';
 
 export default function CreatePostsScreen() {
   const [name, setName] = useState('');
@@ -28,8 +25,7 @@ export default function CreatePostsScreen() {
   const [type, setType] = useState(Camera.Constants.Type.back);
   const [location, setLocation] = useState(null);
 
-  const dispatch = useDispatch();
-  const user = useSelector(selectUser);
+   const user = useSelector(selectUser);
 
   useEffect(() => {
     (async () => {
@@ -81,6 +77,26 @@ export default function CreatePostsScreen() {
       return asset;
     }
   };
+  
+  const createPost = async () => {
+    try {      
+      const post = {
+        imageUri,
+        location,
+        imageName: name,
+        locationName,
+        userId: user.uid,
+      };      
+      const docRef = await addDoc(
+        collection(db, 'users', user.uid, 'posts'),
+        post        
+      );
+      console.log('Document written with ID: ', docRef.id);
+    } catch (e) {
+      console.error('Error adding document: ', e);
+      throw e;
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -119,34 +135,12 @@ export default function CreatePostsScreen() {
       {imageUri && (
         <ButtonPublishActive
           onPress={() => {
-            console.log(user.uid);
-            // uid = user.uid;
-            // const uid = dispatch(getUserId);
-            // const data = dispatch(
-            //   updateDataInFirestore(user.uid, {
-            //     // imageUri: imageUri,
-            //     // location: location,
-            //     // imageName: name,
-            //     // locationName: locationName,
-            //     // imageName: 'Home',
-            //     post: '12345',
-            //   })
-            // );
-            // const data = dispatch(getDataFromFirestore());
-            const data = dispatch(
-              writeDataToFirestore({
-                imageUri: imageUri,
-                location: location,
-                imageName: name,
-                locationName: locationName,
-              })
-            );
-            console.log(data);
+            console.log(user.uid);            
+            createPost();
             navigation.navigate('PostsScreen', { imageUri, location, name, locationName });
             setImageUri(null);
             setName('');
-            setLocationName('');
-            // console.log(getLocales()[0].regionCode);
+            setLocationName('');            
             console.log(location);
           }}
         />

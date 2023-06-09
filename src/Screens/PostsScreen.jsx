@@ -3,9 +3,12 @@ import { CommentWhiteIcon, LocationIcon } from '../../assets/SvgIcons';
 import { useNavigation } from '@react-navigation/native';
 
 import { useSelector } from 'react-redux';
-// import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
-import { selectUser, selectPosts } from '../redux/selectors';
+import { selectUser } from '../redux/selectors';
+
+import { auth, db } from '../firebase/config';
+import { collection, addDoc, getDocs, updateDoc, doc } from 'firebase/firestore';
 
 export default function PostsScreen({ route }) {
   const navigation = useNavigation();
@@ -14,9 +17,29 @@ export default function PostsScreen({ route }) {
   const name = route.params ? route.params.name : null;
   const locationName = route.params ? route.params.locationName : null;
 
+  const [posts, setPosts] = useState([]);
+
   const user = useSelector(selectUser);
-  // const posts = useSelector(selectPosts);
-  // console.log(posts[0]);
+  console.log(user.uid);
+
+  const getDataFromFirestore = async () => {
+    try {
+      const snapshot = await getDocs(collection(db, 'users', user.uid, 'posts'));
+
+      // Перевіряємо у консолі отримані дані
+      snapshot.forEach((doc) => console.log(`${doc.id} =>`, doc.data()));
+      // Повертаємо масив обʼєктів у довільній формі
+      return snapshot.map((doc) => ({ id: doc.id, data: doc.data() }));
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
+  };
+
+  // getDataFromFirestore();
+  useEffect(() => {
+    setPosts(getDataFromFirestore());
+  }, []);
 
   return (
     <View style={styles.container}>
@@ -48,25 +71,29 @@ export default function PostsScreen({ route }) {
           </View>
         </View>
       )}
+      {/* {posts.map((post) => ( */}
       {/* <View style={styles.post}>
-          <Image source={{ uri: imageUri }} style={styles.postPhoto} />
-          <Text style={styles.postName}>{name}</Text>
-          <View style={styles.postWrapper}>
-            <View style={styles.comment}>
-              <Pressable onPress={() => navigation.navigate('CommentsScreen')}>
-                <View>{CommentWhiteIcon}</View>
-              </Pressable>
-              <Text>Comment</Text>
-            </View>
-
-            <View style={styles.location}>
-              <Pressable onPress={() => navigation.navigate('MapScreen', { location })}>
-                <View>{LocationIcon}</View>
-              </Pressable>
-              <Text>{locationName}</Text>
-            </View>
+        <Image source={{ uri: post.imageUri }} style={styles.postPhoto} />
+        <Text style={styles.postName}>{post.imageName}</Text>
+        <View style={styles.postWrapper}>
+          <View style={styles.comment}>
+            <Pressable onPress={() => navigation.navigate('CommentsScreen')}>
+              <View>{CommentWhiteIcon}</View>
+            </Pressable>
+            <Text>Comment</Text>
           </View>
-        </View> */}
+
+          <View style={styles.location}>
+            <Pressable
+              onPress={() => navigation.navigate('MapScreen', { location: post.location })}
+            >
+              <View>{LocationIcon}</View>
+            </Pressable>
+            <Text>{post.locationName}</Text>
+          </View>
+        </View>
+      </View> */}
+      {/* ))} */}
     </View>
   );
 }
