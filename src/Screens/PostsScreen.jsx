@@ -12,15 +12,31 @@ import { collection, getDocs } from 'firebase/firestore';
 
 export default function PostsScreen({ route }) {
   const navigation = useNavigation();
-  const imageUri = route.params ? route.params.imageUri : null;
-  const location = route.params ? route.params.location : null;
-  const name = route.params ? route.params.name : null;
-  const locationName = route.params ? route.params.locationName : null;
+  // const imageUri = route.params ? route.params.imageUri : null;
+  // const location = route.params ? route.params.location : null;
+  // const name = route.params ? route.params.name : null;
+  // const locationName = route.params ? route.params.locationName : null;
 
-  // const [posts, setPosts] = useState([]);
+  const [posts, setPosts] = useState([]);
   const status = useSelector(selectStatus);
   const user = useSelector(selectUser);
   // console.log(user.uid);
+
+  const getPosts = async () => {
+    const data = [];
+    await getDocs(collection(db, 'users', user.uid, 'posts')).then((querySnapshot) => {
+      querySnapshot.docs.forEach((doc) => {
+        data.push({ id: doc.id, ...doc.data() });
+      });
+    });
+    setPosts(data);
+    console.log(data);
+    return data;
+  };
+
+  useEffect(() => {
+    getPosts();
+  }, []);
 
   // const getDataFromFirestore = async () => {
   //   try {
@@ -52,7 +68,7 @@ export default function PostsScreen({ route }) {
           {user && <Text style={styles.userEmail}>{user.email}</Text>}
         </View>
       </View>
-      {route.params && (
+      {/* {route.params && (
         <View style={styles.post}>
           <Image source={{ uri: imageUri }} style={styles.postPhoto} />
           <Text style={styles.postName}>{name}</Text>
@@ -72,7 +88,41 @@ export default function PostsScreen({ route }) {
             </View>
           </View>
         </View>
-      )}
+      )} */}
+
+      {posts &&
+        posts.map((post) => (
+          <View style={styles.post} key={post.id}>
+            <Image source={{ uri: post.imageUri }} style={styles.postPhoto} />
+            <Text style={styles.postName}>{post.imageName}</Text>
+            <View style={styles.postWrapper}>
+              <View style={styles.comment}>
+                <Pressable
+                  onPress={() => {
+                    navigation.navigate('CommentsScreen', {
+                      userId: user.uid,
+                      postId: post.id,
+                      imageUri: post.imageUri,
+                    });
+                    console.log(user.uid, post.id);
+                  }}
+                >
+                  <View>{CommentWhiteIcon}</View>
+                </Pressable>
+                <Text>Comment</Text>
+              </View>
+
+              <View style={styles.location}>
+                <Pressable
+                  onPress={() => navigation.navigate('MapScreen', { location: post.location })}
+                >
+                  <View>{LocationIcon}</View>
+                </Pressable>
+                <Text>{post.locationName}</Text>
+              </View>
+            </View>
+          </View>
+        ))}
     </View>
   );
 }

@@ -74,6 +74,14 @@ export function ButtonCamera({ onPress }) {
   );
 }
 
+export function ButtonComment({ onPress }) {
+  return (
+    <Pressable onPress={onPress}>
+      <Icon name="arrow-up" size={24} />
+    </Pressable>
+  );
+}
+
 const styles = StyleSheet.create({
   button: {
     height: 50,
