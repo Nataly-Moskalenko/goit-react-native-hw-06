@@ -1,28 +1,58 @@
 import { StyleSheet, Text, View, Image, ImageBackground } from 'react-native';
 import imageBg from '../../assets/photo-bg.png';
 import { LocationIcon, CommentOrangeIcon, LikeIcon } from '../../assets/SvgIcons';
+import { selectUser } from '../redux/selectors';
+import { useSelector } from 'react-redux';
+import { useEffect, useState } from 'react';
+import { db } from '../firebase/config';
+import { collection, getDocs } from 'firebase/firestore';
+import { ScrollView } from 'react-native-gesture-handler';
 
-export default function ProfileScreen() {  
+export default function ProfileScreen() {
+  const user = useSelector(selectUser);
+  const [posts, setPosts] = useState([]);
+
+  const getPosts = async () => {
+    const data = [];
+    await getDocs(collection(db, 'users', user.uid, 'posts')).then((querySnapshot) => {
+      querySnapshot.docs.forEach((doc) => {
+        data.push({ id: doc.id, ...doc.data() });
+      });
+    });
+    setPosts(data);
+    console.log(data);
+    return data;
+  };
+
+  useEffect(() => {
+    getPosts();
+  }, []);
 
   return (
     <View style={styles.container}>
       <ImageBackground source={imageBg} resizeMode="cover" style={styles.image}>
         <View style={styles.profile}>
-          <Text style={styles.name}>Natali Romanova</Text>
-          <View style={styles.post}>
-            <Image style={styles.postPhoto} />
-            <Text style={styles.postName}>Name</Text>
-            <View style={styles.postWrapper}>
-              {CommentOrangeIcon}
-              <Text style={styles.comment}>Comment</Text>
-              {LikeIcon}
-              <Text style={styles.like}>Like</Text>
-              <View style={styles.location}>
-                {LocationIcon}
-                <Text>Location</Text>
-              </View>
-            </View>
-          </View>
+          <Text style={styles.name}>{user?.displayName}</Text>
+
+          <ScrollView style={{ height: 'auto', flex: 0 }}>
+            {posts &&
+              posts.map((post) => (
+                <View style={styles.post} key={post.id}>
+                  <Image source={{ uri: post.imageUri }} style={styles.postPhoto} />
+                  <Text style={styles.postName}>{post.imageName}</Text>
+                  <View style={styles.postWrapper}>
+                    {CommentOrangeIcon}
+                    <Text style={styles.comment}>Comment</Text>
+                    {LikeIcon}
+                    <Text style={styles.like}>Like</Text>
+                    <View style={styles.location}>
+                      {LocationIcon}
+                      <Text>{post.locationName}</Text>
+                    </View>
+                  </View>
+                </View>
+              ))}
+          </ScrollView>
         </View>
       </ImageBackground>
     </View>
@@ -31,7 +61,7 @@ export default function ProfileScreen() {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flex: 1,    
     backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',

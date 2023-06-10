@@ -78,14 +78,14 @@ export default function CreatePostsScreen() {
     }
   };
 
-  const createPost = async () => {
+  const createPost = async () => {    
     try {
       const post = {
-        imageUri,
-        location,
+        imageUri: imageUri,
+        location:location,
         imageName: name,
-        locationName,
-        postId: Date.now().toString(),                      
+        locationName: locationName,
+        // postId: Date.now().toString(),                      
       };     
       const docRef = await addDoc(collection(db, 'users', user.uid, 'posts'), post);
       console.log('Document written with ID: ', docRef.id);

@@ -1,6 +1,7 @@
 import { StyleSheet, Text, View, Image, Pressable } from 'react-native';
 import { CommentWhiteIcon, LocationIcon } from '../../assets/SvgIcons';
 import { useNavigation } from '@react-navigation/native';
+import { ScrollView } from 'react-native-gesture-handler';
 
 import { useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
@@ -36,22 +37,7 @@ export default function PostsScreen({ route }) {
 
   useEffect(() => {
     getPosts();
-  }, []);
-
-  // const getDataFromFirestore = async () => {
-  //   try {
-  //     const snapshot = await getDocs(collection(db, 'users', user.uid, 'posts'));
-  //     snapshot.forEach((doc) => console.log(doc.data()));
-  //     snapshot.forEach((doc) => setPosts(posts.push(doc.data())));
-  //     console.log(snapshot.map((doc) => doc.data()));
-  //     return snapshot.map((doc) => doc.data());
-  //   } catch (error) {
-  //     console.log(error);
-  //     throw error;
-  //   } finally {
-  //     console.log(posts);
-  //   }
-  // };
+  }, []);  
 
   useEffect(() => {
     if (status === 'logOuted') {
@@ -89,47 +75,48 @@ export default function PostsScreen({ route }) {
           </View>
         </View>
       )} */}
+      <ScrollView style={{ height: 'auto', flex: 0 }}>
+        {posts &&
+          posts.map((post) => (
+            <View style={styles.post} key={post.id}>
+              <Image source={{ uri: post.imageUri }} style={styles.postPhoto} />
+              <Text style={styles.postName}>{post.imageName}</Text>
+              <View style={styles.postWrapper}>
+                <View style={styles.comment}>
+                  <Pressable
+                    onPress={() => {
+                      navigation.navigate('CommentsScreen', {
+                        userId: user.uid,
+                        postId: post.id,
+                        imageUri: post.imageUri,
+                      });
+                      console.log(user.uid, post.id);
+                    }}
+                  >
+                    <View>{CommentWhiteIcon}</View>
+                  </Pressable>
+                  <Text>Comment</Text>
+                </View>
 
-      {posts &&
-        posts.map((post) => (
-          <View style={styles.post} key={post.id}>
-            <Image source={{ uri: post.imageUri }} style={styles.postPhoto} />
-            <Text style={styles.postName}>{post.imageName}</Text>
-            <View style={styles.postWrapper}>
-              <View style={styles.comment}>
-                <Pressable
-                  onPress={() => {
-                    navigation.navigate('CommentsScreen', {
-                      userId: user.uid,
-                      postId: post.id,
-                      imageUri: post.imageUri,
-                    });
-                    console.log(user.uid, post.id);
-                  }}
-                >
-                  <View>{CommentWhiteIcon}</View>
-                </Pressable>
-                <Text>Comment</Text>
-              </View>
-
-              <View style={styles.location}>
-                <Pressable
-                  onPress={() => navigation.navigate('MapScreen', { location: post.location })}
-                >
-                  <View>{LocationIcon}</View>
-                </Pressable>
-                <Text>{post.locationName}</Text>
+                <View style={styles.location}>
+                  <Pressable
+                    onPress={() => navigation.navigate('MapScreen', { location: post.location })}
+                  >
+                    <View>{LocationIcon}</View>
+                  </Pressable>
+                  <Text>{post.locationName}</Text>
+                </View>
               </View>
             </View>
-          </View>
-        ))}
+          ))}
+      </ScrollView>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flex: 1,    
     backgroundColor: '#fff',
     borderTopColor: 'rgba(0, 0, 0, 0.3)',
     borderBottomColor: 'rgba(0, 0, 0, 0.3)',

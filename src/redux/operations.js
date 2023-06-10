@@ -19,8 +19,8 @@ export const signUpWithEmail = createAsyncThunk(
     await updateProfile(currentUser, { displayName: login });
     const formData = { login, email };
     formData.timestamp = serverTimestamp();
-    await setDoc(doc(db, 'users', user.uid), formData);    
-    return formData;
+    await setDoc(doc(db, 'users', user.uid), formData);
+    return user;
   }
 );
 
