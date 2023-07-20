@@ -3,7 +3,7 @@ import { signUpWithEmail, signInwithEmail, logOut, authStateChanged } from './op
 
 const initialState = {
   user: { email: null, login: null, uid: null },
-  // user: null,
+  userId: null,
   error: null,
   status: 'idle',
   stateChange: false,
@@ -16,8 +16,9 @@ const authSlice = createSlice({
     builder
       .addCase(signUpWithEmail.fulfilled, (state, action) => {
         state.user = action.payload;
+        state.userId = action.payload.uid;
         state.error = null;
-        state.status = 'isRegistred';       
+        state.status = 'isRegistred';
       })
       .addCase(signUpWithEmail.pending, (state) => {
         state.status = 'pending';
@@ -28,6 +29,7 @@ const authSlice = createSlice({
       })
       .addCase(signInwithEmail.fulfilled, (state, action) => {
         state.user = action.payload;
+        state.userId = action.payload.userId;
         state.error = null;
         state.status = 'isLoggedIn';
       })
@@ -40,6 +42,7 @@ const authSlice = createSlice({
       })
       .addCase(logOut.fulfilled, (state) => {
         state.user = null;
+        state.userId = null;
         state.error = null;
         state.status = 'logOuted';
       })
@@ -51,7 +54,7 @@ const authSlice = createSlice({
         state.status = 'pending';
       })
       .addCase(authStateChanged.fulfilled, (state, action) => {
-        state.stateChange = action.payload;
+        state.stateChange = action.payload.stateChange;
       })
       .addCase(authStateChanged.rejected, (state, action) => {
         state.status = 'error';

@@ -1,17 +1,26 @@
+import { API_KEY,
+  AUTH_DOMAIN,
+  DATABASE_URL,
+  PROJECT_ID,
+  STORAGE_BUCKET,
+  MESSAGING_ID,
+  APP_ID,
+  MEASUREMENT_ID, } from '@env';
+
 import { initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 import { getStorage } from 'firebase/storage';
 
 const firebaseConfig = {
-  apiKey: 'AIzaSyAaCA6sSOFff9bdeMxiREmbLHDAVkh9Ru4',
-  authDomain: 'awesomeproject-39307.firebaseapp.com',
-  databaseURL: 'https://awesomeproject-39307-default-rtdb.firebaseio.com',
-  projectId: 'awesomeproject-39307',
-  storageBucket: 'awesomeproject-39307.appspot.com',
-  messagingSenderId: '428388713399',
-  appId: '1:428388713399:web:1a8449d9f52d75942b1e32',
-  measurementId: 'G-KWGTQP3EH7',
+  apiKey: API_KEY,
+  authDomain: AUTH_DOMAIN,
+  databaseURL: DATABASE_URL,
+  projectId: PROJECT_ID,
+  storageBucket: STORAGE_BUCKET,
+  messagingSenderId: MESSAGING_ID,
+  appId: APP_ID,
+  measurementId: MEASUREMENT_ID,
 };
 
 const app = initializeApp(firebaseConfig);

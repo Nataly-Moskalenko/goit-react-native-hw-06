@@ -6,7 +6,7 @@ import { ScrollView } from 'react-native-gesture-handler';
 import { useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
 
-import { selectUser, selectStatus } from '../redux/selectors';
+import { selectUser, selectStatus, selectUserId } from '../redux/selectors';
 
 import { db } from '../firebase/config';
 import { collection, getDocs } from 'firebase/firestore';
@@ -21,6 +21,8 @@ export default function PostsScreen({ route }) {
   const [posts, setPosts] = useState([]);
   const status = useSelector(selectStatus);
   const user = useSelector(selectUser);
+  // const userId = useSelector(selectUserId);
+  // console.log(user);
   // console.log(user.uid);
 
   const getPosts = async () => {
@@ -37,7 +39,7 @@ export default function PostsScreen({ route }) {
 
   useEffect(() => {
     getPosts();
-  }, []);  
+  }, []);
 
   useEffect(() => {
     if (status === 'logOuted') {
@@ -116,7 +118,7 @@ export default function PostsScreen({ route }) {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,    
+    flex: 1,
     backgroundColor: '#fff',
     borderTopColor: 'rgba(0, 0, 0, 0.3)',
     borderBottomColor: 'rgba(0, 0, 0, 0.3)',
